@@ -1,0 +1,16 @@
+e = 2.7182;
+x = -5:0.5:5;
+y1 = x.^2;
+y2 = x.^3;
+y3 = e.^x;
+y4 = sin(x).*cos(x);
+hold on;
+plot(y1,x,"y");
+plot(y2,x,"c");
+plot(y3,x,"r");
+plot(y4,x,"m");
+xlabel("x");
+ylabel("y");
+title('Plot of Functions');
+% Display the grid
+grid on;

@@ -1,0 +1,65 @@
+clc
+clear
+close all
+
+%input data
+alfa=0.0005;
+L=2.5e-1;
+tf=20; %time limit
+TO=28; %ambient temp 
+Ts=300; % source heat
+
+%step
+Nt=101;
+Nz=151;
+t=linspace (0, tf, Nt); 
+z=linspace (0, L, Nz);
+dt=t (2)-t (1);
+dz=z (2)-z (1);
+
+%Matrix prep
+A=zeros (Nz, Nz);%position
+B=zeros (Nz,1);%constant
+T=zeros (Nt, Nz);%OUR GOAL
+
+%fill T with IC 
+% Initial Condition
+T (1, :)=ones (1, Nz) *TO;
+
+%BC-1
+A(1,1)=1;
+B(1)=Ts;
+
+%BC-2
+A (end, end)=1;
+B (1)=Ts;
+% for simplfy calculation 
+s=alfa*dt./dz.^2;
+
+%tridiagonal matrix
+for j=2:Nt %j=time, time start for 2
+for i=2:Nz-1 %i-position
+A(i,i-1)=-s;
+A(i,i)=1+2*s;
+A(i,i+1)=-s;
+B(i)=T (j-1, i);
+
+end
+T(j,:)=A\B;
+figure (1)
+plot (z, T(j, :), 'LineWidth',3)
+title(['Temp at t= ', num2str(t (j)),' sec'])
+axis ([0 L 0 Ts]) 
+xlabel('Distance')
+ylabel('Temperature') 
+pause (0.01)
+end
+
+figure (2)
+imagesc (z, t,T)
+title('Distribution Temperature')
+xlabel('Distance')
+ylabel('Time')
+colormap jet
+colorbar
+grid on
